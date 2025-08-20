@@ -1,29 +1,23 @@
 const Workout = require("../models/Workout");
 
 module.exports.addWorkout = async (req, res) => {
-  const { name, duration } = req.body;
-
-  if (!name || !duration) {
-    return res.status(400).send({ message: "Missing required fields: name, or duration" });
-  }
-
    try {
     
-    const userId = req.user._id; 
+    const { userId, name, duration, dateAdded, status } = req.body; 
 
-    const existingWorkout = await Workout.findOne({ userId, name });
+    const newWorkout = new Workout ({
+      userId,
+      name,
+      duration,
+      dateAdded,
+      status
+    });
 
-    if (existingWorkout) {
-      return res.status(409).send({ message: "Workout already exists" });
-    }
-
-    const newWorkout = new Workout({ userId, name, duration });
-    const savedWorkout = await newWorkout.save();
-
-    return res.status(200).send(savedWorkout);
-  } catch (err) {
-    console.error("Error adding workout:", err);
-    return res.status(500).send({ message: "Failed to add workout" });
+    await newWorkout.save();
+    return res.status(201).send(newWorkout);
+    } catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: "Internal server error" });   
   }
 };
 
