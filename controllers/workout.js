@@ -1,31 +1,30 @@
 const Workout = require("../models/Workout");
 
-module.exports.addWorkout = (req, res) => {
-  Workout.findOne({ userId: req.body.userId, name: req.body.name  })
-    .then(existingWorkout => {
-      if (existingWorkout) {
-        return res.status(409).send({ message: "Workout already exists" });
-      } else {
-        const newWorkout = new Workout({
-          userId: req.body.userId,
-          name: req.body.name,
-          duration: req.body.duration,
-        });
+module.exports.addWorkout = async (req, res) => {
+  const { name, duration } = req.body;
 
-        return newWorkout.save()
-          .then((addedWorkout) => {
-            return res.status(200).send(addedWorkout);
-          })
-          .catch(err => {
-            console.error(err);
-            return res.status(500).send({ message: "Failed to add workout" });
-          });
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      return res.status(500).send({ message: "Failed to check existing workout" });
-    });
+  if (!name || !duration) {
+    return res.status(400).send({ message: "Missing required fields: name, or duration" });
+  }
+
+   try {
+    
+    const userId = req.user._id; 
+
+    const existingWorkout = await Workout.findOne({ userId, name });
+
+    if (existingWorkout) {
+      return res.status(409).send({ message: "Workout already exists" });
+    }
+
+    const newWorkout = new Workout({ userId, name, duration });
+    const savedWorkout = await newWorkout.save();
+
+    return res.status(201).send(savedWorkout);
+  } catch (err) {
+    console.error("Error adding workout:", err);
+    return res.status(500).send({ message: "Failed to add workout" });
+  }
 };
 
 
@@ -60,7 +59,7 @@ module.exports.updateWorkout = async (req, res) => {
    
     return res.status(200).send({
       message: "Workout Updated Successfully",
-      workout: updatedWorkout,
+      updatedWorkout: updatedWorkout
     });
   } catch (err) {
     console.error("Error:", err);
