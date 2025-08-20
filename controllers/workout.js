@@ -20,7 +20,7 @@ module.exports.addWorkout = async (req, res) => {
     const newWorkout = new Workout({ userId, name, duration });
     const savedWorkout = await newWorkout.save();
 
-    return res.status(201).send(savedWorkout);
+    return res.status(200).send(savedWorkout);
   } catch (err) {
     console.error("Error adding workout:", err);
     return res.status(500).send({ message: "Failed to add workout" });
@@ -52,7 +52,7 @@ module.exports.updateWorkout = async (req, res) => {
 
     const workout = await Workout.findById(workoutId);
     if (!workout) {
-      return res.status(404).send({ message: "Workout not found" });
+      return res.status(404).send({ message: "No workouts found" });
     }
    
     const updatedWorkout = await Workout.findByIdAndUpdate(workoutId, updates, { new: true });
@@ -74,7 +74,7 @@ module.exports.deleteWorkout = async (req, res) => {
 		const deleteWorkout = await Workout.findByIdAndDelete(workoutId);
 
 		if(!deleteWorkout){
-			return res.status(404).send({message: "Workout not found"});
+			return res.status(404).send({message: "No workouts found"});
 		}
 		res.status(200).send({message: "Workout deleted successfully"});
 	} catch (error){
@@ -95,7 +95,7 @@ module.exports.completeWorkoutStatus = async (req, res) => {
 
     
     if (!updatedWorkout) {
-      return res.status(404).send({ message: "Workout not found" });
+      return res.status(404).send({ message: "No workouts found" });
     }
 
     
