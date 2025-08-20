@@ -1,7 +1,7 @@
 const Workout = require("../models/Workout");
 
 module.exports.addWorkout = (req, res) => {
-  Workout.findOne({ name: req.body.name })
+  Workout.findOne({ userId: req.body.userId, name: req.body.name  })
     .then(existingWorkout => {
       if (existingWorkout) {
         return res.status(409).send({ message: "Workout already exists" });
