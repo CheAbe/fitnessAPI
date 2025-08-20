@@ -13,11 +13,8 @@ module.exports.registerUser = async (req, res) => {
 
     const hashedPassword = bcrypt.hashSync(req.body.password, 10); 
     const newUser = new User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
       email: req.body.email,
-      password: hashedPassword,
-      mobileNo: req.body.mobileNo,
+      password: hashedPassword
     });
    
     const result = await newUser.save();

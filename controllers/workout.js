@@ -14,7 +14,7 @@ module.exports.addWorkout = (req, res) => {
 
         return newWorkout.save()
           .then((addedWorkout) => {
-            return res.status(201).send(addedWorkout);
+            return res.status(200).send(addedWorkout);
           })
           .catch(err => {
             console.error(err);
