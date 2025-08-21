@@ -1,11 +1,11 @@
 const Workout = require("../models/Workout");
 
 module.exports.addWorkout = async (req, res) => {
-   try {
-    
-    const { userId, name, duration, dateAdded, status } = req.body; 
+  try {
+    const userId = req.user.id;
+    const {  name, duration, dateAdded, status } = req.body;
 
-    const newWorkout = new Workout ({
+    const newWorkout = new Workout({
       userId,
       name,
       duration,
@@ -14,10 +14,11 @@ module.exports.addWorkout = async (req, res) => {
     });
 
     await newWorkout.save();
+    
     return res.status(201).send(newWorkout);
-    } catch (error) {
-    console.error(error);
-    return res.status(500).send({ message: "Internal server error" });   
+  } catch (error) {
+    console.error("Error adding workout:", error);
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
